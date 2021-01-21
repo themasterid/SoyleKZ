@@ -1,2 +1,3 @@
-PyQt5
-playsound
+PyQt5==5.15.2
+pyinstaller==4.2
+playsound==1.2.2
