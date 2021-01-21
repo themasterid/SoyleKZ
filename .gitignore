@@ -1,0 +1,12 @@
+/__pycache__
+/venv
+/sounds
+/dist
+/build
+/bd
+*.bat
+*.ui
+*.jpg
+*.exe
+*.spec
+Readme.TXT
