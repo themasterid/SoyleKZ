@@ -1,5 +1,5 @@
-""" Приложения для изучения казахского языка v 0.20a
-Все материалы были взяты с сайта: https://sozdik.soyle.kz/
+"""Application for learning the Kazakh language v 0.20a
+All materials were taken from the site: sozdik.soyle.kz
 """
 import sys
 import random
@@ -70,32 +70,32 @@ class SoyleWindow(QtWidgets.QMainWindow):
     def lesson_output(self):
         global flag_lesson, lesson_number
         flag_lesson, lesson_number = self.lessons()
-        self.create_dirs() # создаем дериктории для уроков
+        self.create_dirs() # create the directory for lessons
         json_words_bd = 'bd/{0}/{1}/words.json'.format(flag_lesson, lesson_number)
         json_words_bd_tmp = 'bd/{0}/{1}/words_tmp.json'.format(flag_lesson, lesson_number)        
-        json_data = self.open_json_file() # получаем даенные с файла json
+        json_data = self.open_json_file() # getting the data from the json file
         count_words = len(json_data) - 1        
         json_words = {}
         
         for _ in range(count_words):
             json_words[_] = 0
 
-        self.create_file(json_words_bd, json_words) # создаем файлы json
+        self.create_file(json_words_bd, json_words) # creating json files
         json_words_tmp = {
                     'words_total': count_words,
                     'word_no_end': count_words,
                     'progress_bar': 0
                     }
         
-        self.create_file(json_words_bd_tmp, json_words_tmp) # создаем файлы json             
+        self.create_file(json_words_bd_tmp, json_words_tmp) # creating json files             
 
-        # Получение данных для прогресс бара
+        # Getting data for the progress bar
         with open(json_words_bd_tmp, 'r', encoding='utf-8') as read_json_words_bd_tmp:
             data_json = json.load(read_json_words_bd_tmp)
             progress_bar = abs(int((data_json['word_no_end'] * 100 / data_json['words_total']) - 100))
             read_json_words_bd_tmp.close()
 
-         # считываем с файла json данные
+         # reading data from the json file
         with open(json_words_bd, 'r', encoding='utf-8') as read_data_from_file:
             result = os.stat(json_words_bd)
             if result.st_size == 2 or result.st_size == 0:
@@ -106,7 +106,7 @@ class SoyleWindow(QtWidgets.QMainWindow):
                 number_word, _ = random.choice(list(data_loaded.items()))
             read_data_from_file.close()
 
-        # Запись данных для прогресс бара
+        # Recording data for the progress bar
         with open(json_words_bd_tmp, 'w', encoding='utf-8') as write_json_words_bd_tmp:
             data_json['word_no_end'] = len(data_loaded) - 1
             data_json['progress_bar'] = progress_bar
@@ -114,7 +114,7 @@ class SoyleWindow(QtWidgets.QMainWindow):
             write_json_words_bd_tmp.close()        
             self.ui.progressBar_0.setProperty("value", progress_bar)       
         
-        # Количество повторений для прохождения урока.
+        # The number of repetitions to complete the lesson
         value_of_lessons_count = 3
         with open(json_words_bd, 'w', encoding='utf-8') as write_data_json_file:
             if data_loaded[str(number_word)] < value_of_lessons_count:

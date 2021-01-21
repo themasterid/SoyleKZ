@@ -10,3 +10,4 @@
 *.exe
 *.spec
 Readme.TXT
+.gitignore
