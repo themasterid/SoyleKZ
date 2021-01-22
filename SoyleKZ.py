@@ -6,7 +6,7 @@ import random
 import json
 import os
 
-from PyQt5 import QtWidgets #, QtGui
+from PyQt5 import QtWidgets
 from playsound import playsound
 
 from SoyleGUI import MainWindow
