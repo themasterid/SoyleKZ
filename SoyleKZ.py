@@ -7,7 +7,8 @@ import json
 import os
 
 from PyQt5 import QtWidgets
-from playsound import playsound
+import vlc
+from pydub import AudioSegment, effects
 
 from SoyleGUI import MainWindow
 from lists_soyle import combo_0, combo_1, combo_2, combo_3, combo_4, combo_5, combo_6, combo_7, combo_8, combo_less
@@ -25,8 +26,8 @@ class SoyleWindow(QtWidgets.QMainWindow):
         self.ui.comboBox_0.addItems(combo_less)
         self.ui.comboBox_0.setCurrentIndex(0)
         self.ui.comboBox_1.addItems(combo_0)
-        self.ui.comboBox_1.setCurrentIndex(0)        
-        #self.ui.label_image.setPixmap(QtGui.QPixmap("blank.jpg"))
+        self.ui.comboBox_1.setCurrentIndex(0)
+        # self.ui.label_image.setPixmap(QtGui.QPixmap("blank.jpg"))
         self.ui.comboBox_0.activated.connect(self.select_list_item)
         self.ui.pushButton_0.clicked.connect(self.lesson_output)
         self.ui.pushButton_1.clicked.connect(self.check_word)
@@ -35,23 +36,30 @@ class SoyleWindow(QtWidgets.QMainWindow):
     def replay_sound(self):
         get_text = self.ui.label_0.text().split('\n')[0]
         json_data = self.open_json_file()
-        for _, value, in json_data.items():            
+        for _, value, in json_data.items():
             if get_text == value[0]:
                 self.play_sound(value[3])
 
     def play_sound(self, number_word):
         json_data = self.open_json_file()
         file_number = '{}_file'.format(number_word)
-        playsound("sounds/{0}/{1}/".format(
-            flag_lesson, lesson_number) + json_data[file_number][2],
-            block=False)
+        rawsound = AudioSegment.from_file("sounds/{0}/{1}/".format(
+            flag_lesson, lesson_number) + json_data[file_number][2].lower(), "mp3")
+        normalizedsound = effects.normalize(rawsound)
+        normalizedsound.export("sounds/{0}/{1}/".format(
+            flag_lesson, lesson_number) + json_data[file_number][2].lower(), format="mp3")
+        play_sound_less = vlc.MediaPlayer("sounds/{0}/{1}/".format(
+            flag_lesson, lesson_number) + json_data[file_number][2].lower())
+        play_sound_less.audio_set_volume(50)
+        play_sound_less.play()
 
     def create_file(self, url_file, dict_data):
         try:
             file_open_json = open(url_file, 'r', encoding='utf-8')
         except:
             with open(url_file, 'w', encoding='utf-8') as file_open_json:
-                json.dump(dict_data, file_open_json, ensure_ascii=False, indent=4)
+                json.dump(dict_data, file_open_json,
+                          ensure_ascii=False, indent=4)
                 file_open_json.close()
 
     def create_dirs(self):
@@ -59,9 +67,10 @@ class SoyleWindow(QtWidgets.QMainWindow):
             os.mkdir('bd/{0}/'.format(flag_lesson))
         if os.path.isdir('bd/{0}/{1}/'.format(flag_lesson, lesson_number)) is False:
             os.mkdir('bd/{0}/{1}/'.format(flag_lesson, lesson_number))
-    
+
     def open_json_file(self):
-        json_url_file = 'sounds/{0}/{1}/wf_{2}.json'.format(flag_lesson, lesson_number, lesson_number)
+        json_url_file = 'sounds/{0}/{1}/wf_{2}.json'.format(
+            flag_lesson, lesson_number, lesson_number)
         with open(json_url_file, 'r', encoding='utf-8') as read_json_file:
             data_json = json.load(read_json_file)
             read_json_file.close()
@@ -70,29 +79,33 @@ class SoyleWindow(QtWidgets.QMainWindow):
     def lesson_output(self):
         global flag_lesson, lesson_number
         flag_lesson, lesson_number = self.lessons()
-        self.create_dirs() # create the directory for lessons
-        json_words_bd = 'bd/{0}/{1}/words.json'.format(flag_lesson, lesson_number)
-        json_words_bd_tmp = 'bd/{0}/{1}/words_tmp.json'.format(flag_lesson, lesson_number)        
-        json_data = self.open_json_file() # getting the data from the json file
-        count_words = len(json_data) - 1        
+        self.create_dirs()  # create the directory for lessons
+        json_words_bd = 'bd/{0}/{1}/words.json'.format(
+            flag_lesson, lesson_number)
+        json_words_bd_tmp = 'bd/{0}/{1}/words_tmp.json'.format(
+            flag_lesson, lesson_number)
+        json_data = self.open_json_file()  # getting the data from the json file
+        count_words = len(json_data) - 1
         json_words = {}
-        
+
         for _ in range(count_words):
             json_words[_] = 0
 
-        self.create_file(json_words_bd, json_words) # creating json files
+        self.create_file(json_words_bd, json_words)  # creating json files
         json_words_tmp = {
-                    'words_total': count_words,
-                    'word_no_end': count_words,
-                    'progress_bar': 0
-                    }
-        
-        self.create_file(json_words_bd_tmp, json_words_tmp) # creating json files             
+            'words_total': count_words,
+            'word_no_end': count_words,
+            'progress_bar': 0
+        }
+
+        # creating json files
+        self.create_file(json_words_bd_tmp, json_words_tmp)
 
         # Getting data for the progress bar
         with open(json_words_bd_tmp, 'r', encoding='utf-8') as read_json_words_bd_tmp:
             data_json = json.load(read_json_words_bd_tmp)
-            progress_bar = abs(int((data_json['word_no_end'] * 100 / data_json['words_total']) - 100))
+            progress_bar = abs(
+                int((data_json['word_no_end'] * 100 / data_json['words_total']) - 100))
             read_json_words_bd_tmp.close()
 
          # reading data from the json file
@@ -110,26 +123,31 @@ class SoyleWindow(QtWidgets.QMainWindow):
         with open(json_words_bd_tmp, 'w', encoding='utf-8') as write_json_words_bd_tmp:
             data_json['word_no_end'] = len(data_loaded) - 1
             data_json['progress_bar'] = progress_bar
-            json.dump(data_json, write_json_words_bd_tmp, ensure_ascii=False, indent=4)
-            write_json_words_bd_tmp.close()        
-            self.ui.progressBar_0.setProperty("value", progress_bar)       
-        
+            json.dump(data_json, write_json_words_bd_tmp,
+                      ensure_ascii=False, indent=4)
+            write_json_words_bd_tmp.close()
+            self.ui.progressBar_0.setProperty("value", progress_bar)
+
         # The number of repetitions to complete the lesson
         value_of_lessons_count = 3
         with open(json_words_bd, 'w', encoding='utf-8') as write_data_json_file:
             if data_loaded[str(number_word)] < value_of_lessons_count:
                 data_loaded[str(number_word)] += 1
-                json.dump(data_loaded, write_data_json_file, ensure_ascii=False, indent=4)                
-                write_data_json_file.close()                
+                json.dump(data_loaded, write_data_json_file,
+                          ensure_ascii=False, indent=4)
+                write_data_json_file.close()
                 self.play_sound(int(number_word))
-                text_out = json_data['{}_file'.format(number_word)][0] + '\n' + json_data['{}_file'.format(number_word)][1]
+                text_out = json_data['{}_file'.format(
+                    number_word)][0] + '\n' + json_data['{}_file'.format(number_word)][1]
                 self.ui.label_0.setText(text_out)
 
             elif data_loaded[str(number_word)] == value_of_lessons_count:
                 del data_loaded[str(number_word)]
-                json.dump(data_loaded, write_data_json_file, ensure_ascii=False, indent=4)
-                write_data_json_file.close()  
-                text_out = 'Вы выучили слово ' + json_data['{}_file'.format(number_word)][0]
+                json.dump(data_loaded, write_data_json_file,
+                          ensure_ascii=False, indent=4)
+                write_data_json_file.close()
+                text_out = 'Вы выучили слово ' + \
+                    json_data['{}_file'.format(number_word)][0]
                 self.ui.label_0.setText(text_out)
         return
 
