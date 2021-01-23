@@ -46,17 +46,11 @@ class SoyleWindow(QtWidgets.QMainWindow):
         json_data = self.open_json_file()
         file_number = '{}_file'.format(number_word)
         if platform == "linux" or platform == "linux2":
-            rawsound = AudioSegment.from_file("sounds/{0}/{1}/".format(
-                flag_lesson, lesson_number) + json_data[file_number][2].lower(), "mp3")
-            normalizedsound = effects.normalize(rawsound)
-            normalizedsound.export("sounds/{0}/{1}/".format(
-                flag_lesson, lesson_number) + json_data[file_number][2].lower(), format="mp3")
-            play_sound_less = vlc.MediaPlayer("sounds/{0}/{1}/".format(
-                flag_lesson, lesson_number) + json_data[file_number][2].lower())
-            play_sound_less.audio_set_volume(80)
-            play_sound_less.play()
+            playsound("sounds/{0}/{1}/".format(flag_lesson, lesson_number) +
+                      json_data[file_number][2].lower(), block=True)
         elif platform == "darwin":
-            pass
+            playsound("sounds/{0}/{1}/".format(flag_lesson, lesson_number) +
+                      json_data[file_number][2].lower(), block=True)
         elif platform == "win32":
             playsound("sounds/{0}/{1}/".format(flag_lesson, lesson_number) +
                       json_data[file_number][2].lower(), block=False)
