@@ -85,7 +85,7 @@ class SoyleWindow(QtWidgets.QMainWindow):
 
     def lesson_output(self):
         global flag_lesson, lesson_number
-        flag_lesson, lesson_number = self.lessons()
+        flag_lesson, lesson_number = self.lessons()        
         self.create_dirs()  # create the directory for lessons
         json_words_bd = 'bd/{0}/{1}/words.json'.format(
             flag_lesson, lesson_number)
@@ -153,9 +153,11 @@ class SoyleWindow(QtWidgets.QMainWindow):
                 json.dump(data_loaded, write_data_json_file,
                           ensure_ascii=False, indent=4)
                 write_data_json_file.close()
-                text_out = 'Вы выучили слово ' + \
-                    json_data['{}_file'.format(number_word)][0]
+                text_out = 'Вы выучили слово ' + json_data['{}_file'.format(number_word)][0]
                 self.ui.label_0.setText(text_out)
+        text_info = 'Текущее слово\n' + json_data['{}_file'.format(number_word)][0] + " - " + json_data['{}_file'.format(number_word)][1]
+        self.ui.label_image.setText(text_info)
+
         return
 
     def check_word(self):
