@@ -12,7 +12,7 @@ from pydub import AudioSegment, effects
 from sys import platform
 from playsound import playsound
 
-from SoyleGUI import MainWindow
+from SoyleGUI import Ui_MainWindow
 from lists_soyle import combo_0, combo_1, combo_2, combo_3, combo_4, combo_5, combo_6, combo_7, combo_8, combo_less
 
 
@@ -23,7 +23,7 @@ lesson_number = 0
 class SoyleWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(SoyleWindow, self).__init__()
-        self.ui = MainWindow()
+        self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.ui.comboBox_0.addItems(combo_less)
         self.ui.comboBox_0.setCurrentIndex(0)
