@@ -5,10 +5,10 @@
 /dist
 /build
 /bd
-*.[bat]
-*.[ui]
-*.[jpg]
-*.[exe]
-*.[spec]
-*.[TXT]
+*.bat
+*.ui
+*.jpg
+*.exe
+*.spec
+*.TXT
 .gitignore

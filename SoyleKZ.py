@@ -9,6 +9,8 @@ import os
 from PyQt5 import QtWidgets
 import vlc
 from pydub import AudioSegment, effects
+from sys import platform
+from playsound import playsound
 
 from SoyleGUI import MainWindow
 from lists_soyle import combo_0, combo_1, combo_2, combo_3, combo_4, combo_5, combo_6, combo_7, combo_8, combo_less
@@ -43,16 +45,21 @@ class SoyleWindow(QtWidgets.QMainWindow):
     def play_sound(self, number_word):
         json_data = self.open_json_file()
         file_number = '{}_file'.format(number_word)
-        rawsound = AudioSegment.from_file("sounds/{0}/{1}/".format(
+        if platform == "linux" or platform == "linux2":
+            rawsound = AudioSegment.from_file("sounds/{0}/{1}/".format(
             flag_lesson, lesson_number) + json_data[file_number][2].lower(), "mp3")
-        normalizedsound = effects.normalize(rawsound)
-        normalizedsound.export("sounds/{0}/{1}/".format(
+            normalizedsound = effects.normalize(rawsound)
+            normalizedsound.export("sounds/{0}/{1}/".format(
             flag_lesson, lesson_number) + json_data[file_number][2].lower(), format="mp3")
-        play_sound_less = vlc.MediaPlayer("sounds/{0}/{1}/".format(
+            play_sound_less = vlc.MediaPlayer("sounds/{0}/{1}/".format(
             flag_lesson, lesson_number) + json_data[file_number][2].lower())
-        play_sound_less.audio_set_volume(50)
-        play_sound_less.play()
-
+            play_sound_less.audio_set_volume(80)
+            play_sound_less.play()
+        elif platform == "darwin":
+            pass
+        elif platform == "win32":
+            playsound("sounds/{0}/{1}/".format(flag_lesson, lesson_number) + json_data[file_number][2].lower(), block=False)
+    
     def create_file(self, url_file, dict_data):
         try:
             file_open_json = open(url_file, 'r', encoding='utf-8')
