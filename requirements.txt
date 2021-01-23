@@ -1,5 +1,9 @@
 PyQt5==5.15.2
 pyinstaller==4.2
 python-vlc==3.0.11115
+<<<<<<< HEAD
 pydub==0.24.1
 playsound==1.2.2
+=======
+playsound==1.2.2 
+>>>>>>> d5bdb382d666590262ad06ab46639d336aae43bf

@@ -47,19 +47,34 @@ class SoyleWindow(QtWidgets.QMainWindow):
         file_number = '{}_file'.format(number_word)
         if platform == "linux" or platform == "linux2":
             rawsound = AudioSegment.from_file("sounds/{0}/{1}/".format(
+<<<<<<< HEAD
             flag_lesson, lesson_number) + json_data[file_number][2].lower(), "mp3")
             normalizedsound = effects.normalize(rawsound)
             normalizedsound.export("sounds/{0}/{1}/".format(
             flag_lesson, lesson_number) + json_data[file_number][2].lower(), format="mp3")
             play_sound_less = vlc.MediaPlayer("sounds/{0}/{1}/".format(
             flag_lesson, lesson_number) + json_data[file_number][2].lower())
+=======
+                flag_lesson, lesson_number) + json_data[file_number][2].lower(), "mp3")
+            normalizedsound = effects.normalize(rawsound)
+            normalizedsound.export("sounds/{0}/{1}/".format(
+                flag_lesson, lesson_number) + json_data[file_number][2].lower(), format="mp3")
+            play_sound_less = vlc.MediaPlayer("sounds/{0}/{1}/".format(
+                flag_lesson, lesson_number) + json_data[file_number][2].lower())
+>>>>>>> d5bdb382d666590262ad06ab46639d336aae43bf
             play_sound_less.audio_set_volume(80)
             play_sound_less.play()
         elif platform == "darwin":
             pass
         elif platform == "win32":
+<<<<<<< HEAD
             playsound("sounds/{0}/{1}/".format(flag_lesson, lesson_number) + json_data[file_number][2].lower(), block=False)
     
+=======
+            playsound("sounds/{0}/{1}/".format(flag_lesson, lesson_number) +
+                      json_data[file_number][2].lower(), block=False)
+
+>>>>>>> d5bdb382d666590262ad06ab46639d336aae43bf
     def create_file(self, url_file, dict_data):
         try:
             file_open_json = open(url_file, 'r', encoding='utf-8')
