@@ -6,6 +6,7 @@ For work need:
 - PyQt5==5.15.2
 - pyinstaller==4.2 (for build in exe file)
 - python-vlc==3.0.11115
+- playsound==1.2.2 (for Windows)
 
 To work, you need the "sound" and "db" folders (not included in this build). The "sound" folder contains mp3 files.
 
