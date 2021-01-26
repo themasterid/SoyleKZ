@@ -5,6 +5,7 @@ import sys
 import random
 import json
 import os
+import time
 
 from PyQt5 import QtWidgets
 import vlc
@@ -76,7 +77,7 @@ class SoyleWindow(QtWidgets.QMainWindow):
             os.mkdir('bd/{0}/{1}/'.format(flag_lesson, lesson_number))
 
     def open_json_file(self):
-        json_url_file = 'sounds/{0}/{1}/wf_{2}.json'.format(
+        json_url_file = 'sounds/{0}/{1}/new_wf_{2}.json'.format(
             flag_lesson, lesson_number, lesson_number)
         with open(json_url_file, 'r', encoding='utf-8') as read_json_file:
             data_json = json.load(read_json_file)

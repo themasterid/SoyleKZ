@@ -1,14 +1,12 @@
 /__pycache__
 /soylekz-venv
 /soyle-env
-/sounds
 /dist
 /build
-/bd
 *.bat
 *.ui
 *.jpg
 *.exe
 *.spec
 *.TXT
-.gitignore
+"!.gitignore"
