@@ -8,6 +8,6 @@ For work need:
 - python-vlc==3.0.11115
 - playsound==1.2.2 (for Windows)
 
-To work, you need the "sound" and "db" folders (not included in this build). The "sound" folder contains mp3 files.
+To work, you need the "sound" and "db" folders (included in this build). The "sound" folder contains mp3 files.
 
 It's not release version.
