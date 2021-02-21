@@ -84,7 +84,7 @@ class SoyleWindow(QtWidgets.QMainWindow):
         return data_json
 
     def lesson_output(self):
-        global flag_lesson, lesson_number
+        global flag_lesson, lesson_number, json_data, number_word
         self.ui.pushButton_0.setDisabled(True)
         flag_lesson, lesson_number = self.lessons()        
         self.create_dirs()  # create the directory for lessons
@@ -161,6 +161,12 @@ class SoyleWindow(QtWidgets.QMainWindow):
         self.ui.pushButton_var1.setText(text_info)        
         self.ui.pushButton_var1.clicked.connect(self.next_word)
 
+        self.ui.pushButton_var1.setDisabled(False)
+        self.ui.pushButton_var2.setDisabled(False)
+        self.ui.pushButton_var3.setDisabled(False)
+        self.ui.pushButton_var4.setDisabled(False)
+        self.ui.pushButton_var5.setDisabled(False)
+
         word_random, b = random.choice(list(data_loaded.items()))
         self.ui.pushButton_var2.setText(json_data['{}_file'.format(word_random)][1])
         self.ui.pushButton_var2.clicked.connect(self.next_word)
@@ -177,6 +183,23 @@ class SoyleWindow(QtWidgets.QMainWindow):
 
     def next_word(self):
         self.ui.pushButton_0.setDisabled(False)
+        if self.ui.pushButton_var1.text() == json_data['{}_file'.format(number_word)][1]:
+            self.ui.pushButton_var1.setStyleSheet("background-color: green")
+        elif self.ui.pushButton_var2.text() == json_data['{}_file'.format(number_word)][1]:
+            self.ui.pushButton_var2.setStyleSheet("background-color: green")
+        elif self.ui.pushButton_var3.text() == json_data['{}_file'.format(number_word)][1]:
+            self.ui.pushButton_var3.setStyleSheet("background-color: green")
+        elif self.ui.pushButton_var4.text() == json_data['{}_file'.format(number_word)][1]:
+            self.ui.pushButton_var4.setStyleSheet("background-color: green")       
+        elif self.ui.pushButton_var5.text() == json_data['{}_file'.format(number_word)][1]:
+            self.ui.pushButton_var5.setStyleSheet("background-color: green")
+
+        self.ui.pushButton_var1.setDisabled(True)
+        self.ui.pushButton_var2.setDisabled(True)
+        self.ui.pushButton_var3.setDisabled(True)
+        self.ui.pushButton_var4.setDisabled(True)
+        self.ui.pushButton_var5.setDisabled(True)
+        return
 
     def check_word(self):
         text_check = self.ui.label_0.text().split('\n')[0]
