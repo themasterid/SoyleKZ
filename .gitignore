@@ -9,4 +9,5 @@
 *.exe
 *.spec
 *.TXT
-"!.gitignore"
+/bd
+.gitignore

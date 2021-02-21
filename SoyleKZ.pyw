@@ -7,7 +7,7 @@ import json
 import os
 import time
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtGui
 import vlc
 from pydub import AudioSegment, effects
 from sys import platform
@@ -30,9 +30,8 @@ class SoyleWindow(QtWidgets.QMainWindow):
         self.ui.comboBox_0.setCurrentIndex(0)
         self.ui.comboBox_1.addItems(combo_0)
         self.ui.comboBox_1.setCurrentIndex(0)
-        # self.ui.label_image.setPixmap(QtGui.QPixmap("blank.jpg"))
         self.ui.comboBox_0.activated.connect(self.select_list_item)
-        self.ui.pushButton_0.clicked.connect(self.lesson_output)
+        self.ui.pushButton_0.clicked.connect(self.lesson_output)        
         self.ui.pushButton_1.clicked.connect(self.check_word)
         self.ui.replay_word.clicked.connect(self.replay_sound)
 
@@ -86,6 +85,7 @@ class SoyleWindow(QtWidgets.QMainWindow):
 
     def lesson_output(self):
         global flag_lesson, lesson_number
+        self.ui.pushButton_0.setDisabled(True)
         flag_lesson, lesson_number = self.lessons()        
         self.create_dirs()  # create the directory for lessons
         json_words_bd = 'bd/{0}/{1}/words.json'.format(
@@ -137,7 +137,7 @@ class SoyleWindow(QtWidgets.QMainWindow):
             self.ui.progressBar_0.setProperty("value", progress_bar)
 
         # The number of repetitions to complete the lesson
-        value_of_lessons_count = 3
+        value_of_lessons_count = 30
         with open(json_words_bd, 'w', encoding='utf-8') as write_data_json_file:
             if data_loaded[str(number_word)] < value_of_lessons_count:
                 data_loaded[str(number_word)] += 1
@@ -145,8 +145,8 @@ class SoyleWindow(QtWidgets.QMainWindow):
                           ensure_ascii=False, indent=4)
                 write_data_json_file.close()
                 self.play_sound(int(number_word))
-                text_out = json_data['{}_file'.format(
-                    number_word)][0] + '\n' + json_data['{}_file'.format(number_word)][1]
+                #text_out = json_data['{}_file'.format(number_word)][0]
+                text_out = json_data['{}_file'.format(number_word)][0] + '\n' + len(json_data['{}_file'.format(number_word)][1]) * "█"
                 self.ui.label_0.setText(text_out)
 
             elif data_loaded[str(number_word)] == value_of_lessons_count:
@@ -156,10 +156,27 @@ class SoyleWindow(QtWidgets.QMainWindow):
                 write_data_json_file.close()
                 text_out = 'Вы выучили слово ' + json_data['{}_file'.format(number_word)][0]
                 self.ui.label_0.setText(text_out)
-        text_info = 'Текущее слово\n' + json_data['{}_file'.format(number_word)][0] + " - " + json_data['{}_file'.format(number_word)][1]
-        self.ui.label_image.setText(text_info)
+        
+        text_info = json_data['{}_file'.format(number_word)][1]# + " - " + json_data['{}_file'.format(number_word)][1]
+        self.ui.pushButton_var1.setText(text_info)        
+        self.ui.pushButton_var1.clicked.connect(self.next_word)
 
+        word_random, b = random.choice(list(data_loaded.items()))
+        self.ui.pushButton_var2.setText(json_data['{}_file'.format(word_random)][1])
+        self.ui.pushButton_var2.clicked.connect(self.next_word)
+        word_random, b = random.choice(list(data_loaded.items()))
+        self.ui.pushButton_var3.setText(json_data['{}_file'.format(word_random)][1])
+        self.ui.pushButton_var3.clicked.connect(self.next_word)
+        word_random, b = random.choice(list(data_loaded.items()))
+        self.ui.pushButton_var4.setText(json_data['{}_file'.format(word_random)][1])
+        self.ui.pushButton_var4.clicked.connect(self.next_word)
+        word_random, b = random.choice(list(data_loaded.items()))
+        self.ui.pushButton_var5.setText(json_data['{}_file'.format(word_random)][1])
+        self.ui.pushButton_var5.clicked.connect(self.next_word)
         return
+
+    def next_word(self):
+        self.ui.pushButton_0.setDisabled(False)
 
     def check_word(self):
         text_check = self.ui.label_0.text().split('\n')[0]
@@ -222,9 +239,8 @@ class SoyleWindow(QtWidgets.QMainWindow):
             self.ui.comboBox_1.addItems(combo_8)
             self.ui.comboBox_1.activated.connect(self.lessons)
 
-
-app = QtWidgets.QApplication([])
-application = SoyleWindow()
-application.show()
-
-sys.exit(app.exec())
+if __name__ == "__main__":
+    app = QtWidgets.QApplication([])
+    application = SoyleWindow()
+    application.show()
+    sys.exit(app.exec_())
