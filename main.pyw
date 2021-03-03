@@ -13,8 +13,8 @@ from pydub import AudioSegment, effects
 from sys import platform
 from playsound import playsound
 
-from SoyleGUI import Ui_MainWindow
-from lists_soyle import combo_0, combo_1, combo_2, combo_3, combo_4, combo_5, combo_6, combo_7, combo_8, combo_less
+from res.mainUI import Ui_MainWindow
+from res.lists_soyle import combo_0, combo_1, combo_2, combo_3, combo_4, combo_5, combo_6, combo_7, combo_8, combo_less
 
 
 flag_lesson = 0
