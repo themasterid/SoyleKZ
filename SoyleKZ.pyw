@@ -19,13 +19,17 @@ from lists_soyle import combo_0, combo_1, combo_2, combo_3, combo_4, combo_5, co
 
 flag_lesson = 0
 lesson_number = 0
+times_new_roman_black = "font: 75 12pt 'Times New Roman'; background-color: rgb(255, 255, 255); text color: rgb(0, 0, 0);"
+times_new_roman_green = "font: 75 12pt 'Times New Roman'; background-color: rgb(233, 255, 233); text color: rgb(0, 0, 0);"
+times_new_roman_red = "font: 75 12pt 'Times New Roman'; background-color: rgb(255, 194, 194); text color: rgb(0, 0, 0);"
 
 
 class SoyleWindow(QtWidgets.QMainWindow):
+
     def __init__(self):
         super(SoyleWindow, self).__init__()
         self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)
+        self.ui.setupUi(self)        
         self.ui.comboBox_0.addItems(combo_less)
         self.ui.comboBox_0.setCurrentIndex(0)
         self.ui.comboBox_1.addItems(combo_0)
@@ -157,42 +161,84 @@ class SoyleWindow(QtWidgets.QMainWindow):
                 text_out = 'Вы выучили слово ' + json_data['{}_file'.format(number_word)][0]
                 self.ui.label_0.setText(text_out)
         
-        text_info = json_data['{}_file'.format(number_word)][1]# + " - " + json_data['{}_file'.format(number_word)][1]
-        self.ui.pushButton_var1.setText(text_info)        
-        self.ui.pushButton_var1.clicked.connect(self.next_word)
+        list_words = []
 
+        text_info = json_data['{}_file'.format(number_word)][1]# + " - " + json_data['{}_file'.format(number_word)][1]
+    
         self.ui.pushButton_var1.setDisabled(False)
         self.ui.pushButton_var2.setDisabled(False)
         self.ui.pushButton_var3.setDisabled(False)
         self.ui.pushButton_var4.setDisabled(False)
         self.ui.pushButton_var5.setDisabled(False)
 
-        word_random, b = random.choice(list(data_loaded.items()))
-        self.ui.pushButton_var2.setText(json_data['{}_file'.format(word_random)][1])
-        self.ui.pushButton_var2.clicked.connect(self.next_word)
-        word_random, b = random.choice(list(data_loaded.items()))
-        self.ui.pushButton_var3.setText(json_data['{}_file'.format(word_random)][1])
-        self.ui.pushButton_var3.clicked.connect(self.next_word)
-        word_random, b = random.choice(list(data_loaded.items()))
-        self.ui.pushButton_var4.setText(json_data['{}_file'.format(word_random)][1])
-        self.ui.pushButton_var4.clicked.connect(self.next_word)
-        word_random, b = random.choice(list(data_loaded.items()))
-        self.ui.pushButton_var5.setText(json_data['{}_file'.format(word_random)][1])
-        self.ui.pushButton_var5.clicked.connect(self.next_word)
+        list_words.append(text_info)
+
+        words2, _ = random.choice(list(data_loaded.items()))
+        list_words.append(json_data['{}_file'.format(words2)][1])
+
+        words3, _ = random.choice(list(data_loaded.items()))
+        list_words.append(json_data['{}_file'.format(words3)][1])
+
+        words4, _ = random.choice(list(data_loaded.items()))
+        list_words.append(json_data['{}_file'.format(words4)][1])
+
+        words5, _ = random.choice(list(data_loaded.items()))
+        list_words.append(json_data['{}_file'.format(words5)][1])
+        
+        random.shuffle(list_words)
+
+        self.ui.pushButton_var1.setStyleSheet(times_new_roman_black)
+        self.ui.pushButton_var2.setStyleSheet(times_new_roman_black)
+        self.ui.pushButton_var3.setStyleSheet(times_new_roman_black)
+        self.ui.pushButton_var4.setStyleSheet(times_new_roman_black)
+        self.ui.pushButton_var5.setStyleSheet(times_new_roman_black)
+
+        self.ui.pushButton_var1.setText(list_words[0])        
+        self.ui.pushButton_var1.clicked.connect(lambda: self.next_word(text_info, list_words))
+        
+        self.ui.pushButton_var2.setText(list_words[1])
+        self.ui.pushButton_var2.clicked.connect(lambda: self.next_word(text_info, list_words))
+
+        self.ui.pushButton_var3.setText(list_words[2])
+        self.ui.pushButton_var3.clicked.connect(lambda: self.next_word(text_info, list_words))
+
+        self.ui.pushButton_var4.setText(list_words[3])
+        self.ui.pushButton_var4.clicked.connect(lambda: self.next_word(text_info, list_words))
+
+        self.ui.pushButton_var5.setText(list_words[4])
+        self.ui.pushButton_var5.clicked.connect(lambda: self.next_word(text_info, list_words))
         return
 
-    def next_word(self):
+
+    def next_word(self, text_info, list_words):
+        sender = self.sender()  # who send signal
         self.ui.pushButton_0.setDisabled(False)
-        if self.ui.pushButton_var1.text() == json_data['{}_file'.format(number_word)][1]:
-            self.ui.pushButton_var1.setStyleSheet("background-color: green")
-        elif self.ui.pushButton_var2.text() == json_data['{}_file'.format(number_word)][1]:
-            self.ui.pushButton_var2.setStyleSheet("background-color: green")
-        elif self.ui.pushButton_var3.text() == json_data['{}_file'.format(number_word)][1]:
-            self.ui.pushButton_var3.setStyleSheet("background-color: green")
-        elif self.ui.pushButton_var4.text() == json_data['{}_file'.format(number_word)][1]:
-            self.ui.pushButton_var4.setStyleSheet("background-color: green")       
-        elif self.ui.pushButton_var5.text() == json_data['{}_file'.format(number_word)][1]:
-            self.ui.pushButton_var5.setStyleSheet("background-color: green")
+
+        if sender.objectName() == 'pushButton_var1':
+            if self.ui.pushButton_var1.text() == text_info:
+                self.ui.pushButton_var1.setStyleSheet(times_new_roman_green)
+            else:
+                self.ui.pushButton_var1.setStyleSheet(times_new_roman_red)
+        elif sender.objectName() == 'pushButton_var2':
+            if self.ui.pushButton_var2.text() == text_info:
+                self.ui.pushButton_var2.setStyleSheet(times_new_roman_green)
+            else:
+                self.ui.pushButton_var2.setStyleSheet(times_new_roman_red)
+        elif sender.objectName() == 'pushButton_var3':
+            if self.ui.pushButton_var3.text() == text_info:
+                self.ui.pushButton_var3.setStyleSheet(times_new_roman_green)
+            else:
+                self.ui.pushButton_var3.setStyleSheet(times_new_roman_red)
+        elif sender.objectName() == 'pushButton_var4':
+            if self.ui.pushButton_var4.text() == text_info:
+                self.ui.pushButton_var4.setStyleSheet(times_new_roman_green)
+            else:
+                self.ui.pushButton_var4.setStyleSheet(times_new_roman_red)
+        elif sender.objectName() == 'pushButton_var5':
+            if self.ui.pushButton_var5.text() == text_info:
+                self.ui.pushButton_var5.setStyleSheet(times_new_roman_green)
+            else:
+                self.ui.pushButton_var5.setStyleSheet(times_new_roman_red)
 
         self.ui.pushButton_var1.setDisabled(True)
         self.ui.pushButton_var2.setDisabled(True)
