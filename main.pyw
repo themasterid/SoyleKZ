@@ -40,62 +40,60 @@ class SoyleWindow(QtWidgets.QMainWindow):
         self.ui.replay_word.clicked.connect(self.replay_sound)
 
     def replay_sound(self):
-        get_text = self.ui.label_0.text().split('\n')[0]
-        json_data = self.open_json_file()
-        for _, value, in json_data.items():
-            if get_text == value[0]:
-                self.play_sound(value[3])
+        for self._, self.value, in self.open_json_file().items():
+            if self.ui.label_0.text().split('\n')[0] == self.value[0]:
+                self.play_sound(self.value[3])
 
     def play_sound(self, number_word):
-        json_data = self.open_json_file()
-        file_number = '{}_file'.format(number_word)
         if platform == "linux" or platform == "linux2":
-            play_sound_less = vlc.MediaPlayer("sounds/{0}/{1}/".format(flag_lesson, lesson_number) + json_data[file_number][2].lower())
+            play_sound_less = vlc.MediaPlayer("sounds/{0}/{1}/".format(flag_lesson, lesson_number) + self.open_json_file()[f'{number_word}_file'][2].lower())
             play_sound_less.audio_set_volume(80)
             play_sound_less.play()  
         elif platform == "darwin":
             # normalize sound by volume
-            # rawsound = AudioSegment.from_file("sounds/{0}/{1}/".format(flag_lesson, lesson_number) + json_data[file_number][2].upper(), "mp3")    
+            # rawsound = AudioSegment.from_file("sounds/{0}/{1}/".format(flag_lesson, lesson_number) + self.open_json_file()[f'{number_word}_file'][2].upper(), "mp3")    
             # normalizedsound = effects.normalize(rawsound)
-            # normalizedsound.export("sounds/{0}/{1}/{0}_{1}".format(flag_lesson, lesson_number) + "." +str(number_word) + "." + json_data[file_number][2].lower(), format="mp3")         
-            play_sound_less = vlc.MediaPlayer("sounds/{0}/{1}/".format(flag_lesson, lesson_number) + json_data[file_number][2].lower())
+            # normalizedsound.export("sounds/{0}/{1}/{0}_{1}".format(flag_lesson, lesson_number) + "." +str(number_word) + "." + self.open_json_file()[f'{number_word}_file'][2].lower(), format="mp3")         
+            play_sound_less = vlc.MediaPlayer("sounds/{0}/{1}/".format(flag_lesson, lesson_number) + self.open_json_file()[f'{number_word}_file'][2].lower())
             play_sound_less.audio_set_volume(80)
             play_sound_less.play()
         elif platform == "win32":
-            playsound("sounds/{0}/{1}/".format(flag_lesson, lesson_number) + json_data[file_number][2].lower(), block=False)
+            playsound("sounds/{0}/{1}/".format(flag_lesson, lesson_number) + self.open_json_file()[f'{number_word}_file'][2].lower(), block=False)
 
     def create_file(self, url_file, dict_data):
+        self.url_file = url_file
+        self.dict_data = dict_data
         try:
-            file_open_json = open(url_file, 'r', encoding='utf-8')
+            self.file_open_json = open(self.url_file, 'r', encoding='utf-8')
         except:
-            with open(url_file, 'w', encoding='utf-8') as file_open_json:
-                json.dump(dict_data, file_open_json,
+            with open(self.url_file, 'w', encoding='utf-8') as self.file_open_json:
+                json.dump(self.dict_data, self.file_open_json,
                           ensure_ascii=False, indent=4)
-                file_open_json.close()
+                self.file_open_json.close()
 
-    def create_dirs(self):
-        if os.path.isdir('bd/{0}/'.format(flag_lesson)) is False:
-            os.mkdir('bd/{0}/'.format(flag_lesson))
-        if os.path.isdir('bd/{0}/{1}/'.format(flag_lesson, lesson_number)) is False:
-            os.mkdir('bd/{0}/{1}/'.format(flag_lesson, lesson_number))
+    def create_dirs(self, flag_lesson, lesson_number):
+        self.flag_lesson = flag_lesson
+        self.lesson_number = lesson_number
+        if os.path.isdir(f'bd/{self.flag_lesson}/') is False:
+            os.mkdir(f'bd/{self.flag_lesson}/')
+        if os.path.isdir(f'bd/{self.flag_lesson}/{self.lesson_number}/') is False:
+            os.mkdir(f'bd/{self.flag_lesson}/{self.lesson_number}/')
 
     def open_json_file(self):
-        json_url_file = 'sounds/{0}/{1}/new_wf_{2}.json'.format(
-            flag_lesson, lesson_number, lesson_number)
-        with open(json_url_file, 'r', encoding='utf-8') as read_json_file:
-            data_json = json.load(read_json_file)
-            read_json_file.close()
-        return data_json
+        self.flag_lesson = flag_lesson
+        self.lesson_number = lesson_number
+        with open(f'sounds/{flag_lesson}/{lesson_number}/new_wf_{lesson_number}.json', 'r', encoding='utf-8') as self.read_json_file:
+            self.data_json = json.load(self.read_json_file)
+            self.read_json_file.close()
+        return self.data_json
 
     def lesson_output(self):
-        global flag_lesson, lesson_number, json_data, number_word
+        global flag_lesson, lesson_number
         self.ui.pushButton_0.setDisabled(True)
         flag_lesson, lesson_number = self.lessons()        
-        self.create_dirs()  # create the directory for lessons
-        json_words_bd = 'bd/{0}/{1}/words.json'.format(
-            flag_lesson, lesson_number)
-        json_words_bd_tmp = 'bd/{0}/{1}/words_tmp.json'.format(
-            flag_lesson, lesson_number)
+        self.create_dirs(flag_lesson, lesson_number)  # create the directory for lessons
+        json_words_bd = f'bd/{flag_lesson}/{lesson_number}/words.json'
+        json_words_bd_tmp = f'bd/{flag_lesson}/{lesson_number}/words_tmp.json'
         json_data = self.open_json_file()  # getting the data from the json file
         count_words = len(json_data) - 1
         json_words = {}
@@ -115,9 +113,9 @@ class SoyleWindow(QtWidgets.QMainWindow):
 
         # Getting data for the progress bar
         with open(json_words_bd_tmp, 'r', encoding='utf-8') as read_json_words_bd_tmp:
-            data_json = json.load(read_json_words_bd_tmp)
+            self.data_json = json.load(read_json_words_bd_tmp)
             progress_bar = abs(
-                int((data_json['word_no_end'] * 100 / data_json['words_total']) - 100))
+                int((self.data_json['word_no_end'] * 100 / self.data_json['words_total']) - 100))
             read_json_words_bd_tmp.close()
 
          # reading data from the json file
@@ -133,9 +131,9 @@ class SoyleWindow(QtWidgets.QMainWindow):
 
         # Recording data for the progress bar
         with open(json_words_bd_tmp, 'w', encoding='utf-8') as write_json_words_bd_tmp:
-            data_json['word_no_end'] = len(data_loaded) - 1
-            data_json['progress_bar'] = progress_bar
-            json.dump(data_json, write_json_words_bd_tmp,
+            self.data_json['word_no_end'] = len(data_loaded) - 1
+            self.data_json['progress_bar'] = progress_bar
+            json.dump(self.data_json, write_json_words_bd_tmp,
                       ensure_ascii=False, indent=4)
             write_json_words_bd_tmp.close()
             self.ui.progressBar_0.setProperty("value", progress_bar)
@@ -194,23 +192,23 @@ class SoyleWindow(QtWidgets.QMainWindow):
         self.ui.pushButton_var5.setStyleSheet(times_new_roman_black)
 
         self.ui.pushButton_var1.setText(list_words[0])        
-        self.ui.pushButton_var1.clicked.connect(lambda: self.next_word(text_info, list_words))
+        self.ui.pushButton_var1.clicked.connect(lambda: self.next_word(text_info))
         
         self.ui.pushButton_var2.setText(list_words[1])
-        self.ui.pushButton_var2.clicked.connect(lambda: self.next_word(text_info, list_words))
+        self.ui.pushButton_var2.clicked.connect(lambda: self.next_word(text_info))
 
         self.ui.pushButton_var3.setText(list_words[2])
-        self.ui.pushButton_var3.clicked.connect(lambda: self.next_word(text_info, list_words))
+        self.ui.pushButton_var3.clicked.connect(lambda: self.next_word(text_info))
 
         self.ui.pushButton_var4.setText(list_words[3])
-        self.ui.pushButton_var4.clicked.connect(lambda: self.next_word(text_info, list_words))
+        self.ui.pushButton_var4.clicked.connect(lambda: self.next_word(text_info))
 
         self.ui.pushButton_var5.setText(list_words[4])
-        self.ui.pushButton_var5.clicked.connect(lambda: self.next_word(text_info, list_words))
+        self.ui.pushButton_var5.clicked.connect(lambda: self.next_word(text_info))
         return
 
 
-    def next_word(self, text_info, list_words):
+    def next_word(self, text_info):
         sender = self.sender()  # who send signal
         self.ui.pushButton_0.setDisabled(False)
 
