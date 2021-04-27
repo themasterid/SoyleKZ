@@ -46,7 +46,7 @@ class SoyleWindow(QtWidgets.QMainWindow):
 
     def play_sound(self, number_word):
         if platform == "linux" or platform == "linux2":
-            play_sound_less = vlc.MediaPlayer("sounds/{0}/{1}/".format(flag_lesson, lesson_number) + self.open_json_file()[f'{number_word}_file'][2].lower())
+            play_sound_less = vlc.MediaPlayer(f"sounds/{flag_lesson}/{lesson_number}/" + self.open_json_file()[f'{number_word}_file'][2].lower())
             play_sound_less.audio_set_volume(80)
             play_sound_less.play()  
         elif platform == "darwin":
@@ -54,11 +54,11 @@ class SoyleWindow(QtWidgets.QMainWindow):
             # rawsound = AudioSegment.from_file("sounds/{0}/{1}/".format(flag_lesson, lesson_number) + self.open_json_file()[f'{number_word}_file'][2].upper(), "mp3")    
             # normalizedsound = effects.normalize(rawsound)
             # normalizedsound.export("sounds/{0}/{1}/{0}_{1}".format(flag_lesson, lesson_number) + "." +str(number_word) + "." + self.open_json_file()[f'{number_word}_file'][2].lower(), format="mp3")         
-            play_sound_less = vlc.MediaPlayer("sounds/{0}/{1}/".format(flag_lesson, lesson_number) + self.open_json_file()[f'{number_word}_file'][2].lower())
+            play_sound_less = vlc.MediaPlayer(f"sounds/{flag_lesson}/{lesson_number}/" + self.open_json_file()[f'{number_word}_file'][2].lower())
             play_sound_less.audio_set_volume(80)
             play_sound_less.play()
         elif platform == "win32":
-            playsound("sounds/{0}/{1}/".format(flag_lesson, lesson_number) + self.open_json_file()[f'{number_word}_file'][2].lower(), block=False)
+            playsound(f"sounds/{flag_lesson}/{lesson_number}/" + self.open_json_file()[f'{number_word}_file'][2].lower(), block=False)
 
     def create_file(self, url_file, dict_data):
         self.url_file = url_file
@@ -147,8 +147,7 @@ class SoyleWindow(QtWidgets.QMainWindow):
                           ensure_ascii=False, indent=4)
                 write_data_json_file.close()
                 self.play_sound(int(number_word))
-                #text_out = json_data['{}_file'.format(number_word)][0]
-                text_out = json_data['{}_file'.format(number_word)][0] + '\n' + len(json_data['{}_file'.format(number_word)][1]) * "█"
+                text_out = json_data[f'{number_word}_file'][0] + '\n' + len(json_data[f'{number_word}_file'][1]) * "█"
                 self.ui.label_0.setText(text_out)
 
             elif data_loaded[str(number_word)] == value_of_lessons_count:
@@ -156,40 +155,36 @@ class SoyleWindow(QtWidgets.QMainWindow):
                 json.dump(data_loaded, write_data_json_file,
                           ensure_ascii=False, indent=4)
                 write_data_json_file.close()
-                text_out = 'Вы выучили слово ' + json_data['{}_file'.format(number_word)][0]
+                text_out = 'Вы выучили слово ' + json_data[f'{number_word}_file'][0]
                 self.ui.label_0.setText(text_out)
         
         list_words = []
 
-        text_info = json_data['{}_file'.format(number_word)][1]# + " - " + json_data['{}_file'.format(number_word)][1]
+        text_info = json_data[f'{number_word}_file'][1]
     
         self.ui.pushButton_var1.setDisabled(False)
         self.ui.pushButton_var2.setDisabled(False)
         self.ui.pushButton_var3.setDisabled(False)
-        self.ui.pushButton_var4.setDisabled(False)
-        self.ui.pushButton_var5.setDisabled(False)
 
         list_words.append(text_info)
 
         words2, _ = random.choice(list(data_loaded.items()))
-        list_words.append(json_data['{}_file'.format(words2)][1])
+        list_words.append(json_data[f'{words2}_file'][1])
 
         words3, _ = random.choice(list(data_loaded.items()))
-        list_words.append(json_data['{}_file'.format(words3)][1])
+        list_words.append(json_data[f'{words3}_file'][1])
 
         words4, _ = random.choice(list(data_loaded.items()))
-        list_words.append(json_data['{}_file'.format(words4)][1])
+        list_words.append(json_data[f'{words4}_file'][1])
 
         words5, _ = random.choice(list(data_loaded.items()))
-        list_words.append(json_data['{}_file'.format(words5)][1])
+        list_words.append(json_data[f'{words5}_file'][1])
         
         random.shuffle(list_words)
 
         self.ui.pushButton_var1.setStyleSheet(times_new_roman_black)
         self.ui.pushButton_var2.setStyleSheet(times_new_roman_black)
         self.ui.pushButton_var3.setStyleSheet(times_new_roman_black)
-        self.ui.pushButton_var4.setStyleSheet(times_new_roman_black)
-        self.ui.pushButton_var5.setStyleSheet(times_new_roman_black)
 
         self.ui.pushButton_var1.setText(list_words[0])        
         self.ui.pushButton_var1.clicked.connect(lambda: self.next_word(text_info))
@@ -200,11 +195,6 @@ class SoyleWindow(QtWidgets.QMainWindow):
         self.ui.pushButton_var3.setText(list_words[2])
         self.ui.pushButton_var3.clicked.connect(lambda: self.next_word(text_info))
 
-        self.ui.pushButton_var4.setText(list_words[3])
-        self.ui.pushButton_var4.clicked.connect(lambda: self.next_word(text_info))
-
-        self.ui.pushButton_var5.setText(list_words[4])
-        self.ui.pushButton_var5.clicked.connect(lambda: self.next_word(text_info))
         return
 
 
@@ -227,22 +217,10 @@ class SoyleWindow(QtWidgets.QMainWindow):
                 self.ui.pushButton_var3.setStyleSheet(times_new_roman_green)
             else:
                 self.ui.pushButton_var3.setStyleSheet(times_new_roman_red)
-        elif sender.objectName() == 'pushButton_var4':
-            if self.ui.pushButton_var4.text() == text_info:
-                self.ui.pushButton_var4.setStyleSheet(times_new_roman_green)
-            else:
-                self.ui.pushButton_var4.setStyleSheet(times_new_roman_red)
-        elif sender.objectName() == 'pushButton_var5':
-            if self.ui.pushButton_var5.text() == text_info:
-                self.ui.pushButton_var5.setStyleSheet(times_new_roman_green)
-            else:
-                self.ui.pushButton_var5.setStyleSheet(times_new_roman_red)
 
         self.ui.pushButton_var1.setDisabled(True)
         self.ui.pushButton_var2.setDisabled(True)
         self.ui.pushButton_var3.setDisabled(True)
-        self.ui.pushButton_var4.setDisabled(True)
-        self.ui.pushButton_var5.setDisabled(True)
         return
 
     def check_word(self):
