@@ -174,12 +174,6 @@ class SoyleWindow(QtWidgets.QMainWindow):
         words3, _ = random.choice(list(data_loaded.items()))
         list_words.append(json_data[f'{words3}_file'][1])
 
-        words4, _ = random.choice(list(data_loaded.items()))
-        list_words.append(json_data[f'{words4}_file'][1])
-
-        words5, _ = random.choice(list(data_loaded.items()))
-        list_words.append(json_data[f'{words5}_file'][1])
-        
         random.shuffle(list_words)
 
         self.ui.pushButton_var1.setStyleSheet(times_new_roman_black)
