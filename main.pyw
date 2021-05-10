@@ -69,7 +69,6 @@ class SoyleWindow(QtWidgets.QMainWindow):
             with open(self.url_file, 'w', encoding='utf-8') as self.file_open_json:
                 json.dump(self.dict_data, self.file_open_json,
                           ensure_ascii=False, indent=4)
-                self.file_open_json.close()
 
     def create_dirs(self, flag_lesson, lesson_number):
         self.flag_lesson = flag_lesson
@@ -84,7 +83,6 @@ class SoyleWindow(QtWidgets.QMainWindow):
         self.lesson_number = lesson_number
         with open(f'sounds/{flag_lesson}/{lesson_number}/new_wf_{lesson_number}.json', 'r', encoding='utf-8') as self.read_json_file:
             self.data_json = json.load(self.read_json_file)
-            self.read_json_file.close()
         return self.data_json
 
     def lesson_output(self):
@@ -116,7 +114,6 @@ class SoyleWindow(QtWidgets.QMainWindow):
             self.data_json = json.load(read_json_words_bd_tmp)
             progress_bar = abs(
                 int((self.data_json['word_no_end'] * 100 / self.data_json['words_total']) - 100))
-            read_json_words_bd_tmp.close()
 
          # reading data from the json file
         with open(json_words_bd, 'r', encoding='utf-8') as read_data_from_file:
@@ -127,7 +124,6 @@ class SoyleWindow(QtWidgets.QMainWindow):
             else:
                 data_loaded = json.load(read_data_from_file)
                 number_word, _ = random.choice(list(data_loaded.items()))
-            read_data_from_file.close()
 
         # Recording data for the progress bar
         with open(json_words_bd_tmp, 'w', encoding='utf-8') as write_json_words_bd_tmp:
@@ -135,7 +131,6 @@ class SoyleWindow(QtWidgets.QMainWindow):
             self.data_json['progress_bar'] = progress_bar
             json.dump(self.data_json, write_json_words_bd_tmp,
                       ensure_ascii=False, indent=4)
-            write_json_words_bd_tmp.close()
             self.ui.progressBar_0.setProperty("value", progress_bar)
 
         # The number of repetitions to complete the lesson
@@ -145,7 +140,6 @@ class SoyleWindow(QtWidgets.QMainWindow):
                 data_loaded[str(number_word)] += 1
                 json.dump(data_loaded, write_data_json_file,
                           ensure_ascii=False, indent=4)
-                write_data_json_file.close()
                 self.play_sound(int(number_word))
                 text_out = json_data[f'{number_word}_file'][0] + '\n' + len(json_data[f'{number_word}_file'][1]) * "█"
                 self.ui.label_0.setText(text_out)
@@ -154,7 +148,6 @@ class SoyleWindow(QtWidgets.QMainWindow):
                 del data_loaded[str(number_word)]
                 json.dump(data_loaded, write_data_json_file,
                           ensure_ascii=False, indent=4)
-                write_data_json_file.close()
                 text_out = 'Вы выучили слово ' + json_data[f'{number_word}_file'][0]
                 self.ui.label_0.setText(text_out)
         
