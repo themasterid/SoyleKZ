@@ -5,11 +5,11 @@ import sys
 import random
 import json
 import os
-import time
+#import time
 
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets #, QtGui
 import vlc
-from pydub import AudioSegment, effects
+#from pydub import AudioSegment, effects
 from sys import platform
 from playsound import playsound
 

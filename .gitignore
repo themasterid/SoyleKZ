@@ -11,3 +11,4 @@
 *.TXT
 /bd
 .gitignore
+res/__pycache__/
