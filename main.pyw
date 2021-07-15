@@ -1,4 +1,4 @@
-"""Application for learning the Kazakh language v 0.20a
+"""Application for learning the Kazakh language v 0.25a
 All materials were taken from the site: sozdik.soyle.kz
 """
 import sys
