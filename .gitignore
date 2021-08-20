@@ -12,3 +12,4 @@
 /bd
 .gitignore
 res/__pycache__/
+.vscode/
