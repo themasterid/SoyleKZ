@@ -114,7 +114,6 @@ class SoyleWindow(QtWidgets.QMainWindow):
         global flag_lesson, less_n
         self.ui.pushButton_0.setDisabled(True)
         flag_lesson, less_n = self.lessons()
-        # create the directory for lessons
         self.create_dirs(flag_lesson, less_n)
         json_words_bd = f'bd/{flag_lesson}/{less_n}/words.json'
         json_words_bd_tmp = f'bd/{flag_lesson}/{less_n}/words_tmp.json'
@@ -255,14 +254,13 @@ class SoyleWindow(QtWidgets.QMainWindow):
         file_c = self.ui.textEdit_0.toPlainText().split('\n')[0]
         if len(file_c) > len(text_check):
             return self.ui.label_1.setText('Слишком длинное слово!')
-        elif text_check == (
+        if text_check == (
             'Вывод слов, нажмите кнопку "Следующее слово"'
         ) or len(file_c) == 0:
             return self.ui.label_1.setText('Введите не пустую строку!')
         if text_check == file_c:
             return self.ui.label_1.setText('"' + text_check + '" ошибок нет.')
-        else:
-            return self.ui.label_1.setText('Допущена ошибка "' + file_c + '"')
+        return self.ui.label_1.setText('Допущена ошибка "' + file_c + '"')
 
     def lessons(self):
         return (

@@ -3,6 +3,7 @@
 /soyle-env
 /dist
 /build
+/venv
 *.bat
 *.ui
 *.jpg
