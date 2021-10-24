@@ -15,6 +15,7 @@ from res.lists_soyle import (combo_0, combo_1, combo_2, combo_3, combo_4,
                              combo_5, combo_6, combo_7, combo_8, combo_less)
 from res.mainUI import Ui_MainWindow
 
+LESS_COUNT = 30
 flag_lesson = 0
 less_n = 0
 times_new_roman_black = (
@@ -75,48 +76,34 @@ class SoyleWindow(QtWidgets.QMainWindow):
                 block=False)
 
     def create_file(self, url_file, dict_data):
-        self.url_file = url_file
-        self.dict_data = dict_data
         try:
-            self.file_open_json = open(self.url_file, 'r', encoding='utf-8')
+            f = open(url_file, 'r', encoding='utf-8')
         except FileNotFoundError:
-            with open(
-                self.url_file, 'w', encoding='utf-8'
-            ) as self.file_open_json:
-                json.dump(
-                    self.dict_data,
-                    self.file_open_json,
-                    ensure_ascii=False,
-                    indent=4)
+            with open(url_file, 'w', encoding='utf-8') as f:
+                json.dump(dict_data, f, ensure_ascii=False, indent=4)
 
     def create_dirs(self, flag_lesson, less_n):
-        self.flag_lesson = flag_lesson
-        self.less_n = less_n
-        if os.path.isdir(f'bd/{self.flag_lesson}/') is False:
-            os.mkdir(f'bd/{self.flag_lesson}/')
-        if os.path.isdir(
-            f'bd/{self.flag_lesson}/{self.less_n}/'
-        ) is False:
-            os.mkdir(f'bd/{self.flag_lesson}/{self.less_n}/')
+        if not os.path.isdir(f'bd/{flag_lesson}/'):
+            os.mkdir(f'bd/{flag_lesson}/')
+        if not os.path.isdir(f'bd/{flag_lesson}/{less_n}/'):
+            os.mkdir(f'bd/{flag_lesson}/{less_n}/')
 
     def open_json_file(self):
-        self.flag_lesson = flag_lesson
-        self.less_n = less_n
         with open(
             f'sounds/{flag_lesson}/{less_n}/new_wf_{less_n}.json',
             'r',
             encoding='utf-8'
-        ) as self.read_json_file:
-            self.data_json = json.load(self.read_json_file)
-        return self.data_json
+        ) as f:
+            return json.load(f)
 
     def lesson_output(self):
         global flag_lesson, less_n
         self.ui.pushButton_0.setDisabled(True)
         flag_lesson, less_n = self.lessons()
+        # create the directory for lessons
         self.create_dirs(flag_lesson, less_n)
-        json_words_bd = f'bd/{flag_lesson}/{less_n}/words.json'
-        json_words_bd_tmp = f'bd/{flag_lesson}/{less_n}/words_tmp.json'
+        words_bd = f'bd/{flag_lesson}/{less_n}/words.json'
+        words_bd_tmp = f'bd/{flag_lesson}/{less_n}/words_tmp.json'
         json_data = self.open_json_file()
         count_words = len(json_data) - 1
         json_words = {}
@@ -124,7 +111,7 @@ class SoyleWindow(QtWidgets.QMainWindow):
         for _ in range(count_words):
             json_words[_] = 0
 
-        self.create_file(json_words_bd, json_words)  # creating json files
+        self.create_file(words_bd, json_words)  # creating json files
         json_words_tmp = {
             'words_total': count_words,
             'word_no_end': count_words,
@@ -132,59 +119,45 @@ class SoyleWindow(QtWidgets.QMainWindow):
         }
 
         # creating json files
-        self.create_file(json_words_bd_tmp, json_words_tmp)
+        self.create_file(words_bd_tmp, json_words_tmp)
 
         # Getting data for the progress bar
-        with open(
-            json_words_bd_tmp, 'r', encoding='utf-8'
-        ) as read_json_words_bd_tmp:
-            self.data_json = json.load(read_json_words_bd_tmp)
-            progress_bar = abs(
-                int((
-                    self.data_json['word_no_end'] * 100 /
-                    self.data_json['words_total']) - 100))
+        with open(words_bd_tmp, 'r', encoding='utf-8') as f:
+            data_json = json.load(f)
+            progress_bar = abs(int(
+                (
+                    data_json['word_no_end'] * 100 /
+                    data_json['words_total']) - 100
+            ))
 
-        with open(json_words_bd, 'r', encoding='utf-8') as read_data_from_file:
-            result = os.stat(json_words_bd)
+        with open(words_bd, 'r', encoding='utf-8') as f:
+            result = os.stat(words_bd)
             if result.st_size == 2 or result.st_size == 0:
                 self.ui.progressBar_0.setProperty("value", progress_bar)
                 return self.ui.label_0.setText('Вы выучили все слова раздела')
-            else:
-                data_loaded = json.load(read_data_from_file)
-                number_word, _ = random.choice(list(data_loaded.items()))
+            data_loaded = json.load(f)
+            number_word, _ = random.choice(list(data_loaded.items()))
 
         # Recording data for the progress bar
-        with open(
-            json_words_bd_tmp, 'w', encoding='utf-8'
-        ) as write_json_words_bd_tmp:
-            self.data_json['word_no_end'] = len(data_loaded) - 1
-            self.data_json['progress_bar'] = progress_bar
-            json.dump(
-                self.data_json, write_json_words_bd_tmp,
-                ensure_ascii=False, indent=4)
+        with open(words_bd_tmp, 'w', encoding='utf-8') as f:
+            data_json['word_no_end'] = len(data_loaded) - 1
+            data_json['progress_bar'] = progress_bar
+            json.dump(data_json, f, ensure_ascii=False, indent=4)
             self.ui.progressBar_0.setProperty("value", progress_bar)
 
         # The number of repetitions to complete the lesson
-        value_of_lessons_count = 30
-        with open(
-            json_words_bd, 'w', encoding='utf-8'
-        ) as write_data_json_file:
-            if data_loaded[str(number_word)] < value_of_lessons_count:
+        with open(words_bd, 'w', encoding='utf-8') as f:
+            if data_loaded[str(number_word)] < LESS_COUNT:
                 data_loaded[str(number_word)] += 1
-                json.dump(
-                    data_loaded, write_data_json_file,
-                    ensure_ascii=False, indent=4)
+                json.dump(data_loaded, f, ensure_ascii=False, indent=4)
                 self.play_sound(int(number_word))
                 text_out = (
                     json_data[f'{number_word}_file'][0] +
                     '\n' + len(json_data[f'{number_word}_file'][1]) * "█")
                 self.ui.label_0.setText(text_out)
-
-            elif data_loaded[str(number_word)] == value_of_lessons_count:
+            elif data_loaded[str(number_word)] == LESS_COUNT:
                 del data_loaded[str(number_word)]
-                json.dump(
-                    data_loaded, write_data_json_file,
-                    ensure_ascii=False, indent=4)
+                json.dump(data_loaded, f, ensure_ascii=False, indent=4)
                 text_out = (
                     'Вы выучили слово ' +
                     json_data[f'{number_word}_file'][0])
@@ -254,7 +227,7 @@ class SoyleWindow(QtWidgets.QMainWindow):
         file_c = self.ui.textEdit_0.toPlainText().split('\n')[0]
         if len(file_c) > len(text_check):
             return self.ui.label_1.setText('Слишком длинное слово!')
-        if text_check == (
+        elif text_check == (
             'Вывод слов, нажмите кнопку "Следующее слово"'
         ) or len(file_c) == 0:
             return self.ui.label_1.setText('Введите не пустую строку!')
