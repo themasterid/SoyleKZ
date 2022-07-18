@@ -1,6 +1,3 @@
-"""Application for learning the Kazakh language v 0.25a
-All materials were taken from the site: sozdik.soyle.kz
-"""
 import json
 import os
 import random
@@ -8,7 +5,6 @@ import sys
 from sys import platform
 
 import vlc
-from playsound import playsound
 from PyQt5 import QtWidgets
 
 from res.lists_soyle import (combo_0, combo_1, combo_2, combo_3, combo_4,
@@ -48,36 +44,19 @@ class SoyleWindow(QtWidgets.QMainWindow):
         self.ui.replay_word.clicked.connect(self.replay_sound)
 
     def replay_sound(self):
-        for self._, self.value, in self.open_json_file().items():
+        for self._, self.value, in self.open_jfile().items():
             if self.ui.label_0.text().split('\n')[0] == self.value[0]:
                 self.play_sound(self.value[3])
 
     def play_sound(self, number_word):
-        if platform == "linux" or platform == "linux2":
-            play_sound_less = vlc.MediaPlayer(
-                f"sounds/{flag_lesson}/{less_n}/" +
-                self.open_json_file()[f'{number_word}_file'][2].lower())
-            play_sound_less.audio_set_volume(80)
-            play_sound_less.play()
-        elif platform == "darwin":
-            # normalize sound by volume
-            # rawsound = AudioSegment.from_file("sounds/{0}/{1}/".format(flag_lesson, less_n) + self.open_json_file()[f'{number_word}_file'][2].upper(), "mp3")
-            # normalizedsound = effects.normalize(rawsound)
-            # normalizedsound.export("sounds/{0}/{1}/{0}_{1}".format(flag_lesson, less_n) + "." +str(number_word) + "." + self.open_json_file()[f'{number_word}_file'][2].lower(), format="mp3")
-            play_sound_less = vlc.MediaPlayer(
-                f"sounds/{flag_lesson}/{less_n}/" +
-                self.open_json_file()[f'{number_word}_file'][2].lower())
-            play_sound_less.audio_set_volume(80)
-            play_sound_less.play()
-        elif platform == "win32":
-            playsound(
-                f"sounds/{flag_lesson}/{less_n}/" +
-                self.open_json_file()[f'{number_word}_file'][2].lower(),
-                block=False)
+        if platform in ['linux', 'linux2', 'win32']:
+            _ = self.open_jfile()[f'{number_word}_file'][2].lower()
+            vlc.MediaPlayer(
+                f'sounds/{flag_lesson}/{less_n}/{_}')
 
     def create_file(self, url_file, dict_data):
         try:
-            f = open(url_file, 'r', encoding='utf-8')
+            open(url_file, 'r')
         except FileNotFoundError:
             with open(url_file, 'w', encoding='utf-8') as f:
                 json.dump(dict_data, f, ensure_ascii=False, indent=4)
@@ -88,7 +67,7 @@ class SoyleWindow(QtWidgets.QMainWindow):
         if not os.path.isdir(f'bd/{flag_lesson}/{less_n}/'):
             os.mkdir(f'bd/{flag_lesson}/{less_n}/')
 
-    def open_json_file(self):
+    def open_jfile(self):
         with open(
             f'sounds/{flag_lesson}/{less_n}/new_wf_{less_n}.json',
             'r',
@@ -104,12 +83,9 @@ class SoyleWindow(QtWidgets.QMainWindow):
         self.create_dirs(flag_lesson, less_n)
         words_bd = f'bd/{flag_lesson}/{less_n}/words.json'
         words_bd_tmp = f'bd/{flag_lesson}/{less_n}/words_tmp.json'
-        json_data = self.open_json_file()
+        json_data = self.open_jfile()
         count_words = len(json_data) - 1
-        json_words = {}
-
-        for _ in range(count_words):
-            json_words[_] = 0
+        json_words = {_: 0 for _ in range(count_words)}
 
         self.create_file(words_bd, json_words)  # creating json files
         json_words_tmp = {
@@ -132,7 +108,7 @@ class SoyleWindow(QtWidgets.QMainWindow):
 
         with open(words_bd, 'r', encoding='utf-8') as f:
             result = os.stat(words_bd)
-            if result.st_size == 2 or result.st_size == 0:
+            if result.st_size in [2, 0]:
                 self.ui.progressBar_0.setProperty("value", progress_bar)
                 return self.ui.label_0.setText('Вы выучили все слова раздела')
             data_loaded = json.load(f)
@@ -163,32 +139,22 @@ class SoyleWindow(QtWidgets.QMainWindow):
                     json_data[f'{number_word}_file'][0])
                 self.ui.label_0.setText(text_out)
 
-        list_words = []
-
         text_info = json_data[f'{number_word}_file'][1]
-
         self.ui.pushButton_var1.setDisabled(False)
         self.ui.pushButton_var2.setDisabled(False)
         self.ui.pushButton_var3.setDisabled(False)
-
-        list_words.append(text_info)
-
+        list_words = [text_info]
         words2, _ = random.choice(list(data_loaded.items()))
         list_words.append(json_data[f'{words2}_file'][1])
-
         words3, _ = random.choice(list(data_loaded.items()))
         list_words.append(json_data[f'{words3}_file'][1])
-
         random.shuffle(list_words)
-
         self.ui.pushButton_var1.setStyleSheet(times_new_roman_black)
         self.ui.pushButton_var2.setStyleSheet(times_new_roman_black)
         self.ui.pushButton_var3.setStyleSheet(times_new_roman_black)
-
         self.ui.pushButton_var1.setText(list_words[0])
         self.ui.pushButton_var1.clicked.connect(
             lambda: self.next_word(text_info))
-
         self.ui.pushButton_var2.setText(list_words[1])
         self.ui.pushButton_var2.clicked.connect(
             lambda: self.next_word(text_info))
