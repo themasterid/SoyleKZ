@@ -2,12 +2,11 @@
 
 ## Протестировано и работает под управлением
 
+- Python 3.9.7
 - Windows 10/11 x64 (x86) or LinuxMint 20, x64 (x86)
-- Win VLC Player x64 (x86) or Linux VLC Player x64 (x86)
 - PyQt5
 - pyinstaller (для создания исполняемого exe файла)
-- python-vlc
-- playsound (для Windows)
+- playsound==1.2.2 (для Windows 10/11)
 
 
 ### Клонируем репозиторий к себе на ПК

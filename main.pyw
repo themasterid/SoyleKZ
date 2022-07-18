@@ -4,7 +4,7 @@ import random
 import sys
 from sys import platform
 
-import vlc
+from playsound import playsound
 from PyQt5 import QtWidgets
 
 from res.lists_soyle import (combo_0, combo_1, combo_2, combo_3, combo_4,
@@ -50,9 +50,9 @@ class SoyleWindow(QtWidgets.QMainWindow):
 
     def play_sound(self, number_word):
         if platform in ['linux', 'linux2', 'win32']:
-            _ = self.open_jfile()[f'{number_word}_file'][2].lower()
-            vlc.MediaPlayer(
-                f'sounds/{flag_lesson}/{less_n}/{_}')
+            sound = self.open_jfile()[f'{number_word}_file'][2].lower()
+            playsound(
+                f'sounds\\{flag_lesson}\\{less_n}\\{sound}')
 
     def create_file(self, url_file, dict_data):
         try:
