@@ -9,7 +9,6 @@
 *.jpg
 *.exe
 *.spec
-*.TXT
 /bd
 res/__pycache__/
 .vscode/
