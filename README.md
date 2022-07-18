@@ -16,9 +16,11 @@
 git clone git@github.com:themasterid/SoyleKZ.git
 ```
 
-
 ### Активируем виртуальное окружение
 
+```bash
+source venv/Scripts/activate
+```
 
 ### Обновляем pip и устанавливаем зависимости
 
@@ -27,10 +29,23 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
+### Конвертируем GUI
+
+```bash
+pyuic5 mainUI.ui -o res/mainUI.py
+```
+
 ### Запускаем приложение
+
+```bash
+python main.pyw
+```
 
 
 ### Создаем exe файл для Windows
 
+```bash
+pyinstaller --onefile --noconsole --path venv\Lib\site-packages\PyQt5\Qt\bin main.pyw
+```
 
 Автор: [Клепиков Дмитрий](https://github.com/themasterid)
